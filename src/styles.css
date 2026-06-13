@@ -300,6 +300,7 @@ a:focus-visible {
   overflow: hidden;
   background: #080808 url("/assets/smudges.jpg") center / cover;
   opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .desktop::after {

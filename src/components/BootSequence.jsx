@@ -13,7 +13,7 @@ export default function BootSequence({ onComplete }) {
 
   useEffect(() => {
     const launchTimer = window.setTimeout(() => setPhase("launch"), 1650);
-    const doneTimer = window.setTimeout(onComplete, 4300);
+    const doneTimer = window.setTimeout(onComplete, 3100);
     return () => {
       window.clearTimeout(launchTimer);
       window.clearTimeout(doneTimer);
