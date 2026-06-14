@@ -9,6 +9,7 @@ const hoverMessages = [
   "Built with React and suspicious confidence.",
   "ABOUT ME has the lore. Resume included.",
   "Yes, this desktop works on mobile too.",
+  "Double-click me and the floor turns into a tiny game.",
   "I roam. Tanveer ships.",
 ];
 
@@ -61,8 +62,16 @@ function randomDelay() {
   return 2200 + Math.random() * 2600;
 }
 
-export default function DesktopPet({ paused, reaction, activityKey = 0, mood, onBonk }) {
+export default function DesktopPet({
+  paused,
+  reaction,
+  activityKey = 0,
+  mood,
+  onBonk,
+  onStartRun,
+}) {
   const petRef = useRef(null);
+  const clickTimerRef = useRef(null);
   const positionRef = useRef(42);
   const messageIndexRef = useRef(0);
   const hitTimerRef = useRef(null);
@@ -205,6 +214,7 @@ export default function DesktopPet({ paused, reaction, activityKey = 0, mood, on
 
   useEffect(
     () => () => {
+      window.clearTimeout(clickTimerRef.current);
       window.clearTimeout(hitTimerRef.current);
       window.clearTimeout(idleTimerRef.current);
       window.clearTimeout(idleHideTimerRef.current);
@@ -239,7 +249,7 @@ export default function DesktopPet({ paused, reaction, activityKey = 0, mood, on
     }
   };
 
-  const handleHit = () => {
+  const handleBonk = () => {
     if (paused) return;
     window.clearTimeout(hitTimerRef.current);
     setHoverMessage("");
@@ -247,6 +257,22 @@ export default function DesktopPet({ paused, reaction, activityKey = 0, mood, on
     setHitActive(true);
     onBonk?.();
     hitTimerRef.current = window.setTimeout(() => setHitActive(false), 720);
+  };
+
+  const handleClick = () => {
+    if (paused) return;
+    window.clearTimeout(clickTimerRef.current);
+    clickTimerRef.current = window.setTimeout(handleBonk, 185);
+  };
+
+  const handleDoubleClick = (event) => {
+    if (paused) return;
+    event.preventDefault();
+    window.clearTimeout(clickTimerRef.current);
+    window.clearTimeout(hitTimerRef.current);
+    setHoverMessage("");
+    setHitActive(false);
+    onStartRun?.();
   };
 
   const speechMessage = reaction?.message ?? idleReaction?.message ?? hoverMessage;
@@ -272,8 +298,9 @@ export default function DesktopPet({ paused, reaction, activityKey = 0, mood, on
       }`}
       data-pose={pose}
       type="button"
-      aria-label="Desktop spirit. Hover for a message or click to bonk."
-      onClick={handleHit}
+      aria-label="Desktop spirit. Hover for a message, click to bonk, or double-click to start Spirit Run."
+      onClick={handleClick}
+      onDoubleClick={handleDoubleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={hideMessage}
       onFocus={handleFocus}
@@ -291,6 +318,9 @@ export default function DesktopPet({ paused, reaction, activityKey = 0, mood, on
           BONK!
         </span>
       ) : null}
+      <span key={`hammer-${hitCount}`} className="pet-hammer" aria-hidden="true">
+        <span />
+      </span>
       <img key={`${pose}-${hitCount}`} src={poseSource(pose)} alt="" draggable="false" />
     </button>
   );

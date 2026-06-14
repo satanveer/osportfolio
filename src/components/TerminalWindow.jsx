@@ -12,6 +12,7 @@ export default function TerminalWindow({
   onPrintResume,
   onSwitchOs,
   onShowErrorEgg,
+  onStartSpiritRun,
   onChangeWallpaper,
   onMoodChange,
   questCompleted,
@@ -45,7 +46,7 @@ export default function TerminalWindow({
     }
 
     if (command === "help") {
-      writeLine("commands: whoami, projects, resume, spirit, quest, wallpaper, os, clear");
+      writeLine("commands: whoami, projects, resume, spirit, spirit run, quest, wallpaper, os, clear");
       writeLine("secret: sudo hire tanveer");
       return;
     }
@@ -70,6 +71,12 @@ export default function TerminalWindow({
     if (command === "spirit") {
       onMoodChange("hacker");
       writeLine("spirit mood set to hacker. it is inspecting your tabs.");
+      return;
+    }
+
+    if (command === "spirit run" || command === "run") {
+      writeLine("arming lower desktop runner lane...");
+      onStartSpiritRun();
       return;
     }
 

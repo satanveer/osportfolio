@@ -29,6 +29,7 @@ export default function QuestLog({ completed }) {
           </li>
         ))}
       </ul>
+      <p className="quest-log__hint">Hint: the spirit has a double-click secret.</p>
     </aside>
   );
 }

@@ -15,11 +15,39 @@
 }
 
 :root {
+  --viewport-height: 100vh;
+  --desktop-menubar-height: 8.5vh;
+  --window-header-fluid: 10vh;
+  --window-offset: 5vh;
+  --tablet-window-offset: 2.5vh;
+  --mobile-window-offset: 1.5vh;
   color: #050505;
   background: #000;
   font-family: "Lato", Arial, sans-serif;
   font-synthesis: none;
   text-rendering: geometricPrecision;
+}
+
+@supports (height: 100svh) {
+  :root {
+    --viewport-height: 100svh;
+    --desktop-menubar-height: 8.5svh;
+    --window-header-fluid: 10svh;
+    --window-offset: 5svh;
+    --tablet-window-offset: 2.5svh;
+    --mobile-window-offset: 1.5svh;
+  }
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --viewport-height: 100dvh;
+    --desktop-menubar-height: 8.5dvh;
+    --window-header-fluid: 10dvh;
+    --window-offset: 5dvh;
+    --tablet-window-offset: 2.5dvh;
+    --mobile-window-offset: 1.5dvh;
+  }
 }
 
 * {
@@ -65,7 +93,7 @@ a:focus-visible {
 
 .app-shell {
   width: 100%;
-  height: 100%;
+  height: var(--viewport-height);
   background: #000;
 }
 
@@ -295,7 +323,7 @@ a:focus-visible {
 .desktop {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: var(--viewport-height);
   padding: 10px;
   overflow: hidden;
   background: #080808 url("/assets/smudges.jpg") center / cover;
@@ -388,7 +416,7 @@ a:focus-visible {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  height: 8.5vh;
+  height: var(--desktop-menubar-height);
   min-height: 61px;
   padding: 0 2.2vw;
   border: 8px solid #000;
@@ -503,7 +531,7 @@ a:focus-visible {
 }
 
 .desktop-area {
-  height: calc(91.5vh - 20px);
+  height: calc(var(--viewport-height) - var(--desktop-menubar-height) - 20px);
   min-height: 0;
   border: 8px solid #000;
   border-top: 0;
@@ -534,8 +562,7 @@ a:focus-visible {
 }
 
 .desktop--wallpaper-matrix .desktop-area {
-  background-color: #020902;
-  background-image:
+  background:
     repeating-linear-gradient(90deg, rgba(40, 255, 106, 0.16) 0 2px, transparent 2px 38px),
     repeating-linear-gradient(0deg, rgba(40, 255, 106, 0.11) 0 2px, transparent 2px 29px),
     radial-gradient(circle at 70% 20%, rgba(58, 255, 112, 0.24), transparent 28%),
@@ -1136,8 +1163,19 @@ a:focus-visible {
   color: #fff;
 }
 
+.quest-log__hint {
+  margin: 11px 0 0;
+  padding-top: 8px;
+  border-top: 2px dashed rgba(0, 0, 0, 0.34);
+  color: #5b4318;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
 .desktop-pet {
   --pet-x: 42px;
+  --hammer-cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%23000' stroke-width='2' stroke-linejoin='round'%3E%3Cpath fill='%23d8d8d8' d='M5 6h14l3 3-4 4H4z'/%3E%3Cpath fill='%23814d2b' d='M17 13l3-3 9 9-4 4z'/%3E%3Cpath d='M8 8h7M20 17l5 5'/%3E%3C/g%3E%3C/svg%3E") 8 8;
   position: absolute;
   z-index: 3;
   bottom: 12px;
@@ -1149,6 +1187,7 @@ a:focus-visible {
   place-items: end center;
   border: 0;
   background: transparent;
+  cursor: var(--hammer-cursor), pointer;
   transform: translate3d(var(--pet-x), 0, 0);
   touch-action: none;
 }
@@ -1170,6 +1209,10 @@ a:focus-visible {
 .desktop-pet:disabled {
   cursor: default;
   opacity: 0.82;
+}
+
+.desktop-pet:not(:disabled):hover {
+  cursor: var(--hammer-cursor), pointer;
 }
 
 .desktop-pet.is-reacting {
@@ -1200,6 +1243,64 @@ a:focus-visible {
   transition: filter 0.15s ease, transform 0.15s ease;
 }
 
+.pet-hammer {
+  position: absolute;
+  z-index: 4;
+  top: 12px;
+  right: 16px;
+  width: 58px;
+  height: 58px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(20px, -18px) rotate(18deg);
+  transform-origin: 46px 46px;
+}
+
+.pet-hammer::before,
+.pet-hammer::after,
+.pet-hammer span {
+  position: absolute;
+  content: "";
+}
+
+.pet-hammer::before {
+  top: 3px;
+  left: 0;
+  width: 34px;
+  height: 18px;
+  border: 3px solid #000;
+  border-radius: 4px;
+  background: #d8d8d8;
+  box-shadow: 3px 3px 0 #000;
+  transform: rotate(-18deg);
+}
+
+.pet-hammer::after {
+  top: 17px;
+  left: 29px;
+  width: 10px;
+  height: 42px;
+  border: 3px solid #000;
+  border-radius: 4px;
+  background: #8a512e;
+  box-shadow: 2px 2px 0 #000;
+  transform: rotate(-42deg);
+}
+
+.pet-hammer span {
+  top: 13px;
+  left: 8px;
+  width: 13px;
+  height: 3px;
+  background: #fff;
+  transform: rotate(-18deg);
+}
+
+.desktop-pet.is-hit .pet-hammer {
+  opacity: 1;
+  animation: pet-hammer-swing 0.72s cubic-bezier(0.18, 0.9, 0.22, 1.12) both;
+}
+
 .pet-speech {
   position: absolute;
   z-index: 2;
@@ -1211,6 +1312,7 @@ a:focus-visible {
   border-radius: 8px;
   background: #fff;
   box-shadow: 3px 3px 0 #000;
+  color: #000;
   font-size: 11px;
   font-weight: 800;
   line-height: 1.25;
@@ -1302,6 +1404,28 @@ a:focus-visible {
   }
 }
 
+@keyframes pet-hammer-swing {
+  0% {
+    opacity: 0;
+    transform: translate(34px, -38px) rotate(-42deg) scale(0.9);
+  }
+  18% {
+    opacity: 1;
+    transform: translate(16px, -20px) rotate(-18deg) scale(1);
+  }
+  38% {
+    opacity: 1;
+    transform: translate(-9px, 8px) rotate(37deg) scale(1.04);
+  }
+  52% {
+    transform: translate(-3px, 1px) rotate(24deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(21px, -24px) rotate(-24deg) scale(0.96);
+  }
+}
+
 @keyframes pet-zap {
   0% {
     filter: invert(0) brightness(1.3);
@@ -1313,13 +1437,289 @@ a:focus-visible {
   }
 }
 
+.desktop-area--spirit-run .desktop-icons,
+.desktop-area--spirit-run .quest-log {
+  filter: saturate(0.82);
+  opacity: 0.76;
+}
+
+.spirit-run-game {
+  position: absolute;
+  z-index: 7;
+  right: 34px;
+  bottom: 22px;
+  left: 34px;
+  display: grid;
+  height: min(238px, 34vh);
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+  border: 4px solid #000;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 8px 8px 0 #000;
+  color: #000;
+  animation: spirit-run-rise 0.36s cubic-bezier(0.2, 0.9, 0.2, 1.08) both;
+}
+
+.spirit-run-hud {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-bottom: 3px solid #000;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 11px, rgba(0, 0, 0, 0.06) 11px 13px),
+    #fff4a8;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.spirit-run-hud strong {
+  margin-right: auto;
+  font-size: 15px;
+  letter-spacing: -0.04em;
+}
+
+.spirit-run-hud span {
+  padding: 4px 7px;
+  border: 2px solid #000;
+  border-radius: 999px;
+  background: #fff;
+  white-space: nowrap;
+}
+
+.spirit-run-hud button {
+  min-width: 58px;
+  padding: 5px 9px;
+  border: 2px solid #000;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 2px 2px 0 #000;
+  color: #000;
+  cursor: pointer;
+  font: inherit;
+}
+
+.spirit-run-hud button:active {
+  translate: 2px 2px;
+  box-shadow: none;
+}
+
+.spirit-run-stage {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  outline: 0;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(0, 0, 0, 0.07) 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 26%, rgba(0, 0, 0, 0.05) 0 2px, transparent 3px),
+    linear-gradient(rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.64)),
+    url("/assets/pattern-grid.png");
+  background-size: 210px 120px, 260px 140px, auto, 180px;
+  cursor: pointer;
+}
+
+.spirit-run-stage:focus-visible {
+  box-shadow: inset 0 0 0 4px #ffd84a;
+}
+
+.spirit-run-skyline {
+  position: absolute;
+  inset: 14px 0 auto;
+  display: flex;
+  height: 34px;
+  gap: 12%;
+  padding-left: 22%;
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+.spirit-run-skyline span {
+  display: block;
+  width: 94px;
+  height: 100%;
+  border: 2px solid #000;
+  border-bottom: 0;
+  background:
+    linear-gradient(#000 0 0) 16px 9px / 9px 2px no-repeat,
+    linear-gradient(#000 0 0) 37px 17px / 14px 2px no-repeat,
+    linear-gradient(#000 0 0) 61px 11px / 10px 2px no-repeat,
+    rgba(255, 255, 255, 0.66);
+  transform: skewX(-8deg);
+}
+
+.spirit-run-ground {
+  position: absolute;
+  right: 0;
+  bottom: 31px;
+  left: 0;
+  height: 13px;
+  border-top: 3px solid #000;
+  border-bottom: 3px solid #000;
+  background:
+    repeating-linear-gradient(90deg, #000 0 14px, transparent 14px 30px),
+    #fff;
+  animation: spirit-run-track 0.54s linear infinite;
+}
+
+.spirit-run-player {
+  position: absolute;
+  bottom: 39px;
+  left: 68px;
+  width: auto;
+  max-width: 96px;
+  height: 96px;
+  object-fit: contain;
+  object-position: center bottom;
+  pointer-events: none;
+  image-rendering: pixelated;
+  transform-origin: center bottom;
+  transition: filter 0.12s ease;
+}
+
+.is-gameover .spirit-run-player {
+  filter: grayscale(0.2) contrast(1.08);
+}
+
+.spirit-obstacle,
+.spirit-token {
+  position: absolute;
+  left: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.spirit-obstacle {
+  bottom: 44px;
+  border: 3px solid #000;
+  background: #fff;
+  box-shadow: 4px 4px 0 #000;
+  font-size: 9px;
+  font-weight: 950;
+}
+
+.spirit-obstacle span,
+.spirit-token span {
+  position: relative;
+  z-index: 1;
+}
+
+.spirit-obstacle--error {
+  background:
+    linear-gradient(#000 0 0) 0 0 / 100% 11px no-repeat,
+    #fff;
+  color: #000;
+}
+
+.spirit-obstacle--error::before {
+  position: absolute;
+  top: 16px;
+  left: 8px;
+  width: 12px;
+  height: 18px;
+  border: 2px solid #000;
+  border-radius: 50% 50% 50% 0;
+  background: #ffd84a;
+  content: "";
+  transform: rotate(-12deg);
+}
+
+.spirit-obstacle--mail::before,
+.spirit-obstacle--mail::after {
+  position: absolute;
+  inset: 7px 6px auto;
+  height: 16px;
+  border-bottom: 2px solid #000;
+  content: "";
+}
+
+.spirit-obstacle--mail::before {
+  transform: skewY(24deg);
+}
+
+.spirit-obstacle--mail::after {
+  transform: skewY(-24deg);
+}
+
+.spirit-obstacle--disk {
+  background:
+    linear-gradient(#000 0 0) 9px 8px / 22px 13px no-repeat,
+    linear-gradient(#fff 0 0) 13px 29px / 18px 8px no-repeat,
+    #d8d8d8;
+}
+
+.spirit-token {
+  bottom: 122px;
+  width: 34px;
+  height: 42px;
+  border: 3px solid #000;
+  background:
+    linear-gradient(135deg, transparent 0 10px, #000 10px 13px, transparent 13px),
+    linear-gradient(#000 0 0) 7px 15px / 18px 2px no-repeat,
+    linear-gradient(#000 0 0) 7px 23px / 14px 2px no-repeat,
+    #fff;
+  box-shadow: 4px 4px 0 #000;
+  color: #000;
+  font-size: 9px;
+  font-weight: 950;
+}
+
+.spirit-run-card {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  width: min(340px, calc(100% - 34px));
+  padding: 12px 14px;
+  border: 3px solid #000;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 5px 5px 0 #000;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.spirit-run-card strong {
+  display: block;
+  font-size: 15px;
+  letter-spacing: -0.03em;
+}
+
+.spirit-run-card p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+@keyframes spirit-run-rise {
+  from {
+    clip-path: inset(100% 0 0 round 22px);
+    transform: translateY(26px) scaleY(0.9);
+  }
+  to {
+    clip-path: inset(0 round 22px);
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes spirit-run-track {
+  to {
+    background-position: -30px 0, 0 0;
+  }
+}
+
 .retro-window {
   position: fixed;
   z-index: 1000;
-  top: 5vh;
+  top: var(--window-offset);
+  bottom: var(--window-offset);
   left: 5vw;
   width: 90vw;
-  height: 90vh;
+  height: auto;
   overflow: hidden;
   border: 4px solid #000;
   border-radius: 40px;
@@ -1337,7 +1737,7 @@ a:focus-visible {
 .window-header {
   position: relative;
   display: flex;
-  height: 10vh;
+  height: var(--window-header-fluid);
   min-height: 70px;
   align-items: center;
   border-bottom: 4px solid #000;
@@ -1377,7 +1777,7 @@ a:focus-visible {
 }
 
 .window-body {
-  height: calc(100% - max(10vh, 70px));
+  height: calc(100% - max(var(--window-header-fluid), 70px));
   overflow: auto;
   background: rgba(255, 255, 255, 0.78);
   scrollbar-width: none;
@@ -1937,7 +2337,7 @@ a:focus-visible {
 .achievement-stack {
   position: absolute;
   z-index: 2200;
-  top: calc(8.5vh + 22px);
+  top: calc(var(--desktop-menubar-height) + 22px);
   right: 28px;
   display: grid;
   width: min(320px, calc(100vw - 32px));
@@ -2793,7 +3193,7 @@ a:focus-visible {
 }
 
 .desktop--windows .desktop-area {
-  height: calc(100vh - 104px);
+  height: calc(var(--viewport-height) - 104px);
   border: 2px solid #7f7f7f;
   border-top-color: #404040;
   border-left-color: #404040;
@@ -2932,6 +3332,12 @@ a:focus-visible {
   border-radius: 0;
 }
 
+.desktop--windows .quest-log__hint {
+  border-top: 1px dotted #000;
+  color: #000;
+  font-family: Arial, sans-serif;
+}
+
 .desktop--windows .desktop-pet {
   bottom: 54px;
 }
@@ -2945,9 +3351,64 @@ a:focus-visible {
   box-shadow: 3px 3px 0 #000;
 }
 
+.desktop--windows .spirit-run-game {
+  bottom: 58px;
+  border: 2px solid #7f7f7f;
+  border-top-color: #fff;
+  border-left-color: #fff;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
+  border-radius: 0;
+  background: #c0c0c0;
+  box-shadow: inset -1px -1px 0 #000, inset 1px 1px 0 #dfdfdf, 4px 4px 0 rgba(0, 0, 0, 0.42);
+  font-family: "Courier New", monospace;
+}
+
+.desktop--windows .spirit-run-hud {
+  min-height: 32px;
+  border-bottom-width: 2px;
+  background: #000080;
+  color: #fff;
+}
+
+.desktop--windows .spirit-run-hud span,
+.desktop--windows .spirit-run-hud button,
+.desktop--windows .spirit-run-card,
+.desktop--windows .spirit-obstacle,
+.desktop--windows .spirit-token {
+  border-radius: 0;
+}
+
+.desktop--windows .spirit-run-hud span,
+.desktop--windows .spirit-run-hud button {
+  border-color: #fff #404040 #404040 #fff;
+  background: #c0c0c0;
+  box-shadow: none;
+  color: #000;
+}
+
+.desktop--windows .spirit-run-stage {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 42%),
+    #008080;
+}
+
+.desktop--windows .spirit-run-skyline span {
+  border-color: #fff;
+  background:
+    linear-gradient(#fff 0 0) 16px 9px / 9px 2px no-repeat,
+    linear-gradient(#fff 0 0) 37px 17px / 14px 2px no-repeat,
+    linear-gradient(#fff 0 0) 61px 11px / 10px 2px no-repeat,
+    rgba(0, 0, 0, 0.18);
+}
+
+.desktop--windows .spirit-run-card {
+  background: #ffffdf;
+}
+
 .desktop--windows .retro-window {
   top: 58px;
-  height: calc(100vh - 116px);
+  height: calc(var(--viewport-height) - 116px);
   border: 2px solid #7f7f7f;
   border-top-color: #fff;
   border-left-color: #fff;
@@ -2962,7 +3423,7 @@ a:focus-visible {
   top: 76px;
   left: 22vw;
   width: 56vw;
-  height: min(72vh, 640px);
+  height: min(calc(var(--viewport-height) - 152px), 640px);
 }
 
 .desktop--windows .window-header {
@@ -3592,12 +4053,23 @@ a:focus-visible {
     width: min(230px, 34vw);
   }
 
+  .spirit-run-game {
+    right: 18px;
+    left: 18px;
+    height: min(220px, 32vh);
+  }
+
+  .spirit-run-hud {
+    flex-wrap: wrap;
+  }
+
   .retro-window,
   .retro-window--compact {
-    top: 2.5vh;
+    top: var(--tablet-window-offset);
+    bottom: var(--tablet-window-offset);
     left: 3vw;
     width: 94vw;
-    height: 94vh;
+    height: auto;
     border-radius: 28px;
     box-shadow: 7px 7px 0 #000;
   }
@@ -3638,9 +4110,10 @@ a:focus-visible {
   .desktop--windows .retro-window,
   .desktop--windows .retro-window--compact {
     top: 54px;
+    bottom: 56px;
     left: 3vw;
     width: 94vw;
-    height: calc(100vh - 110px);
+    height: auto;
   }
 
   .desktop--windows .quest-log {
@@ -3694,7 +4167,7 @@ a:focus-visible {
   }
 
   .desktop-area {
-    height: calc(100vh - 82px);
+    height: calc(var(--viewport-height) - 82px);
     border-width: 5px;
     border-top: 0;
     border-radius: 0 0 19px 19px;
@@ -3772,6 +4245,58 @@ a:focus-visible {
     width: 150px;
   }
 
+  .spirit-run-game {
+    right: 8px;
+    bottom: 10px;
+    left: 8px;
+    height: min(198px, 31vh);
+    border-width: 3px;
+    border-radius: 16px;
+    box-shadow: 5px 5px 0 #000;
+  }
+
+  .spirit-run-hud {
+    min-height: 38px;
+    gap: 5px;
+    padding: 6px;
+    font-size: 10px;
+  }
+
+  .spirit-run-hud strong {
+    flex: 1 0 100%;
+    font-size: 12px;
+  }
+
+  .spirit-run-hud span {
+    padding: 3px 5px;
+  }
+
+  .spirit-run-hud button {
+    min-width: 48px;
+    padding: 4px 6px;
+  }
+
+  .spirit-run-player {
+    left: 42px;
+    max-width: 78px;
+    height: 78px;
+  }
+
+  .spirit-run-card {
+    top: 10px;
+    padding: 9px 10px;
+    border-width: 2px;
+    border-radius: 11px;
+  }
+
+  .spirit-run-card strong {
+    font-size: 12px;
+  }
+
+  .spirit-run-card p {
+    font-size: 10px;
+  }
+
   .achievement-stack {
     top: 84px;
     right: 12px;
@@ -3795,10 +4320,11 @@ a:focus-visible {
 
   .retro-window,
   .retro-window--compact {
-    top: 1.5vh;
+    top: var(--mobile-window-offset);
+    bottom: var(--mobile-window-offset);
     left: 2vw;
     width: 94vw;
-    height: 95vh;
+    height: auto;
     border-width: 3px;
     border-radius: 23px;
     box-shadow: 6px 6px 0 #000;
@@ -4041,7 +4567,7 @@ a:focus-visible {
   }
 
   .desktop--windows .desktop-area {
-    height: calc(100vh - 99px);
+    height: calc(var(--viewport-height) - 99px);
     border-width: 2px;
   }
 
@@ -4058,6 +4584,10 @@ a:focus-visible {
     bottom: 50px;
   }
 
+  .desktop--windows .spirit-run-game {
+    bottom: 52px;
+  }
+
   .desktop--windows .achievement-stack {
     top: 62px;
   }
@@ -4069,9 +4599,10 @@ a:focus-visible {
   .desktop--windows .retro-window,
   .desktop--windows .retro-window--compact {
     top: 60px;
+    bottom: 52px;
     left: 2vw;
     width: 94vw;
-    height: calc(100vh - 112px);
+    height: auto;
     border-width: 2px;
     border-radius: 0;
     box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.45);
@@ -4140,5 +4671,10 @@ a:focus-visible {
 
   .desktop-pet {
     transform: translate3d(var(--pet-x), 0, 0);
+  }
+
+  .spirit-run-game,
+  .spirit-run-ground {
+    animation: none !important;
   }
 }

@@ -12,6 +12,7 @@ import ProjectsWindow from "./components/ProjectsWindow";
 import QuestLog from "./components/QuestLog";
 import ResumePrinter from "./components/ResumePrinter";
 import Screensaver from "./components/Screensaver";
+import SpiritRunGame from "./components/SpiritRunGame";
 import TerminalWindow from "./components/TerminalWindow";
 import WelcomeWindow from "./components/WelcomeWindow";
 import WallpaperSwitcher from "./components/WallpaperSwitcher";
@@ -65,6 +66,11 @@ const achievements = {
     mark: "ZZZ",
     title: "Woke the screensaver",
     description: "The desktop dreamed in bouncing pixels.",
+  },
+  runner: {
+    mark: "RUN",
+    title: "Started Spirit Run",
+    description: "The lower desktop became cardio.",
   },
 };
 
@@ -377,6 +383,7 @@ export default function App() {
   const [spiritMood, setSpiritMood] = useState("curious");
   const [screensaverActive, setScreensaverActive] = useState(false);
   const [errorEggOpen, setErrorEggOpen] = useState(false);
+  const [spiritRunActive, setSpiritRunActive] = useState(false);
   const [petReaction, setPetReaction] = useState(null);
   const [petActivityKey, setPetActivityKey] = useState(0);
   const [achievementToasts, setAchievementToasts] = useState([]);
@@ -544,6 +551,7 @@ export default function App() {
     playClick();
     setStartMenuOpen(false);
     setScreensaverActive(false);
+    setSpiritRunActive(false);
     setPetActivityKey((current) => current + 1);
     rememberFolderOpen(name);
     if (name === "terminal") completeQuest("terminal");
@@ -614,6 +622,37 @@ export default function App() {
     setPetActivityKey((current) => current + 1);
   }, [completeQuest]);
 
+  const startSpiritRun = useCallback(() => {
+    playClick();
+    setActiveWindow(null);
+    setStartMenuOpen(false);
+    setScreensaverActive(false);
+    setSpiritRunActive(true);
+    setSpiritMood("proud");
+    unlockAchievement("runner");
+  }, [playClick, unlockAchievement]);
+
+  const stopSpiritRun = useCallback(() => {
+    playClick();
+    setSpiritRunActive(false);
+    setSpiritMood("curious");
+    setPetActivityKey((current) => current + 1);
+  }, [playClick]);
+
+  const handleSpiritRunGameOver = useCallback(
+    (score) => {
+      setSpiritMood(score >= 800 ? "proud" : "annoyed");
+      triggerPetReaction({
+        message:
+          score >= 800
+            ? `score ${score}. tiny cardio champion.`
+            : `score ${score}. popup collision reported.`,
+        pose: score >= 800 ? "jumping" : "failed",
+      });
+    },
+    [triggerPetReaction],
+  );
+
   const switchOs = () => {
     if (switchingTo) return;
     const target = osMode === "mac" ? "windows" : "mac";
@@ -642,7 +681,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!booted || switchingTo) return undefined;
+    if (!booted || switchingTo || spiritRunActive) return undefined;
 
     let idleTimer;
     const armScreensaver = () => {
@@ -675,7 +714,7 @@ export default function App() {
         window.removeEventListener(eventName, handleActivity);
       }
     };
-  }, [booted, completeQuest, screensaverDelay, switchingTo, triggerPetReaction]);
+  }, [booted, completeQuest, screensaverDelay, spiritRunActive, switchingTo, triggerPetReaction]);
 
   return (
     <main className="app-shell">
@@ -688,6 +727,8 @@ export default function App() {
           introActive ? " desktop--intro" : ""
         }${
           switchingTo ? " desktop--switching" : ""
+        }${
+          spiritRunActive ? " desktop--spirit-run" : ""
         }`}
       >
         <OsTransition target={switchingTo} />
@@ -715,7 +756,10 @@ export default function App() {
           </nav>
         </header>
 
-        <section className="desktop-area" aria-label="Portfolio desktop">
+        <section
+          className={`desktop-area${spiritRunActive ? " desktop-area--spirit-run" : ""}`}
+          aria-label="Portfolio desktop"
+        >
           <div className="desktop-icons">
             <DesktopIcon
               image="/assets/folder-projects.png"
@@ -765,13 +809,18 @@ export default function App() {
             />
           </div>
           <QuestLog completed={questCompleted} />
-          <DesktopPet
-            paused={activeWindow !== null}
-            reaction={petReaction}
-            activityKey={petActivityKey}
-            mood={spiritMood}
-            onBonk={handlePetBonk}
-          />
+          {spiritRunActive ? (
+            <SpiritRunGame onExit={stopSpiritRun} onGameOver={handleSpiritRunGameOver} />
+          ) : (
+            <DesktopPet
+              paused={activeWindow !== null}
+              reaction={petReaction}
+              activityKey={petActivityKey}
+              mood={spiritMood}
+              onBonk={handlePetBonk}
+              onStartRun={startSpiritRun}
+            />
+          )}
         </section>
 
         {activeWindow === "projects" ? (
@@ -811,6 +860,7 @@ export default function App() {
             onPrintResume={startResumePrint}
             onSwitchOs={switchOs}
             onShowErrorEgg={showErrorEgg}
+            onStartSpiritRun={startSpiritRun}
             onChangeWallpaper={changeWallpaper}
             onMoodChange={setSpiritMood}
             questCompleted={questCompleted}
