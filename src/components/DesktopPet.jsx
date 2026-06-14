@@ -125,9 +125,16 @@ export default function DesktopPet({
     let frameId;
     let roamTimer;
     let stopped = false;
+    const mobileQuery = window.matchMedia("(max-width: 620px)");
+
+    const getMaxPosition = () => {
+      const parentWidth = pet.parentElement.clientWidth;
+      const rightReserve = mobileQuery.matches ? Math.max(204, parentWidth * 0.52) : 24;
+      return Math.max(24, parentWidth - pet.offsetWidth - rightReserve);
+    };
 
     const setPosition = (value) => {
-      const max = Math.max(24, pet.parentElement.clientWidth - pet.offsetWidth - 24);
+      const max = getMaxPosition();
       const next = Math.min(Math.max(24, value), max);
       positionRef.current = next;
       pet.style.setProperty("--pet-x", `${next}px`);
@@ -138,7 +145,7 @@ export default function DesktopPet({
         return;
       }
 
-      const max = Math.max(24, pet.parentElement.clientWidth - pet.offsetWidth - 24);
+      const max = getMaxPosition();
       const current = Math.min(positionRef.current, max);
       let target = 24 + Math.random() * Math.max(1, max - 24);
 

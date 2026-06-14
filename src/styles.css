@@ -4174,33 +4174,43 @@ a:focus-visible {
   }
 
   .desktop-icons {
-    top: 6vh;
-    right: 50%;
-    grid-template-columns: repeat(2, 112px);
-    gap: 3vh 14vw;
-    transform: translateX(50%);
+    top: clamp(18px, 3.6svh, 28px);
+    right: auto;
+    left: 50%;
+    width: min(342px, calc(100% - 22px));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    justify-items: center;
+    gap: clamp(14px, 2.6svh, 22px) 7px;
+    transform: translateX(-50%);
   }
 
   .desktop-icon {
-    width: 106px;
+    width: clamp(64px, 18vw, 74px);
   }
 
   .desktop-icon__label {
-    font-size: 11px;
+    margin-top: 4px;
+    font-size: 9px;
+    line-height: 1.05;
+  }
+
+  .desktop-icon--inverted img {
+    border-radius: 13px;
   }
 
   .desktop-icon--special .desktop-action-glyph {
-    width: 106px;
+    width: clamp(64px, 18vw, 74px);
   }
 
   .quest-log,
   .desktop--windows .quest-log {
     top: auto;
-    right: 10px;
-    bottom: 132px;
+    right: 12px;
+    bottom: max(14px, env(safe-area-inset-bottom));
     left: auto;
-    width: 154px;
-    padding: 10px;
+    z-index: 5;
+    width: min(162px, 42vw);
+    padding: 8px 9px 9px;
     transform: none;
   }
 
@@ -4208,8 +4218,24 @@ a:focus-visible {
     margin: 0;
   }
 
+  .quest-log strong {
+    font-size: 14px;
+  }
+
+  .quest-log header span {
+    padding: 1px 6px;
+    font-size: 10px;
+  }
+
   .quest-log ul {
     display: none;
+  }
+
+  .quest-log__hint {
+    margin-top: 7px;
+    padding-top: 7px;
+    font-size: 10px;
+    line-height: 1.18;
   }
 
   .wallpaper-options {
@@ -4225,24 +4251,27 @@ a:focus-visible {
   }
 
   .desktop-pet {
+    --pet-x: 24px;
     bottom: 8px;
-    width: 112px;
-    height: 122px;
+    width: 96px;
+    height: 106px;
   }
 
   .desktop-pet img {
-    max-width: 98px;
-    height: 102px;
+    max-width: 82px;
+    height: 88px;
   }
 
   .desktop-pet::after {
-    right: 25px;
-    left: 25px;
+    right: 20px;
+    left: 20px;
   }
 
   .pet-speech {
-    bottom: 108px;
-    width: 150px;
+    bottom: 92px;
+    width: min(142px, 44vw);
+    padding: 6px 8px;
+    font-size: 10px;
   }
 
   .spirit-run-game {
@@ -4572,11 +4601,12 @@ a:focus-visible {
   }
 
   .desktop--windows .desktop-icons {
-    top: 4.5vh;
+    top: 4.5svh;
     right: auto;
     left: 50%;
-    grid-template-columns: repeat(2, 108px);
-    gap: 3vh 11vw;
+    width: min(342px, calc(100% - 22px));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(14px, 2.4svh, 20px) 7px;
     transform: translateX(-50%);
   }
 
@@ -4594,6 +4624,7 @@ a:focus-visible {
 
   .desktop--windows .quest-log {
     bottom: 55px;
+    width: min(162px, 42vw);
   }
 
   .desktop--windows .retro-window,
